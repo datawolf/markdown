@@ -1,0 +1,6 @@
+lanuange: go
+go:
+  - 1.5
+script:
+  - go get -t -v ./...
+  - go test -v
