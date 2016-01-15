@@ -197,3 +197,23 @@ func (html *Html) NormalText(out *bytes.Buffer, text []byte) {
 func (html *Html) Smartypants(out *bytes.Buffer, text []byte) {
 
 }
+
+func (html *Html) Emphasis(out *bytes.Buffer, text []byte) {
+	if len(text) == 0 {
+		return
+	}
+	out.WriteString("<em>")
+	out.Write(text)
+	out.WriteString("</em>")
+}
+
+func (html *Html) Paragraph(out *bytes.Buffer, text func() bool) {
+	marker := out.Len()
+
+	out.WriteString("<p>")
+	if !text() {
+		out.Truncate(marker)
+		return
+	}
+	out.WriteString("</p>\n")
+}

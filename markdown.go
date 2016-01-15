@@ -75,9 +75,11 @@ type Renderer interface {
 	//	BlockCode(out *bytes.Buffer, text []byte, lang string)
 	//	BlockQuote(out *bytes.Buffer, text []byte)
 	Header(out *bytes.Buffer, text func() bool, level int, id string)
+	Paragraph(out *bytes.Buffer, text func() bool)
 
 	// span-level callbacks
 	//	CodeSpan(out *bytes.Buffer, text []byte)
+	Emphasis(out *bytes.Buffer, text []byte)
 
 	// Low-level callbacks
 	NormalText(out *bytes.Buffer, entity []byte)
@@ -178,16 +180,16 @@ func MarkdownOptions(input []byte, renderer Renderer, opts Options) []byte {
 	p.insideLink = false
 
 	// register inline parsers
-	//	p.inlineCallback['*'] = emphasis
-	//	p.inlineCallback['_'] = emphasis
-	//	if extensions&EXTENSION_STRIKETHROUGH != 0 {
-	//p.inlineCallback['~'] = emphasis
-	//	}
+	p.inlineCallback['*'] = emphasis
+	p.inlineCallback['_'] = emphasis
+	//if extensions&EXTENSION_STRIKETHROUGH != 0 {
+	//	p.inlineCallback['~'] = emphasis
+	//}
 	//	p.inlineCallback['`'] = codeSpan
 	//	p.inlineCallback['\n'] = linkBreak
 	//	p.inlineCallback['['] = link
 	//	p.inlineCallback['<'] = leftAngle
-	//	p.inlineCallback['\\'] = escape
+	p.inlineCallback['\\'] = escape
 	//	p.inlineCallback['&'] = entity
 
 	//	if extensions&EXTENSION_AUTOLINK != 0 {
@@ -278,6 +280,5 @@ func secondRender(p *parser, input []byte) []byte {
 	if p.nesting != 0 {
 		panic("Nesting level did not end at zero")
 	}
-
 	return out.Bytes()
 }

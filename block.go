@@ -9,7 +9,6 @@ package markdown
 
 import (
 	"bytes"
-	//"fmt"
 )
 
 // Parse block-level data.
@@ -44,8 +43,10 @@ func (p *parser) block(out *bytes.Buffer, input []byte) {
 			input = input[i:]
 			continue
 		}
-	}
 
+		// anything else must look like a normal paragraph
+		input = input[p.paragraph(out, input):]
+	}
 	p.nesting--
 }
 
@@ -115,4 +116,66 @@ func (p *parser) isEmpty(data []byte) int {
 	}
 
 	return i + 1
+}
+
+func (p *parser) paragraph(out *bytes.Buffer, data []byte) int {
+	var i int
+
+	// keep going until we find something to mark the end of the paragraph
+	for i < len(data) {
+		// mark the beginning of the current line
+		//	prev = line
+		current := data[i:]
+
+		// did we find a blank line marking the end of the paragraph
+		if n := p.isEmpty(current); n > 0 {
+			p.renderParagraph(out, data[:i])
+			return i + n
+		}
+
+		// an underline under some text marks a header, so our paragraph ended on prev line
+
+		// if there's a prefixed header paragraph is over
+		if p.isPrefixHeader(current) {
+			p.renderParagraph(out, data[:i])
+			return i
+		}
+
+		// otherwise, scan to the beginning of the next line
+		for data[i] != '\n' {
+			i++
+		}
+		i++
+	}
+
+	p.renderParagraph(out, data[:i])
+	return i
+}
+
+// renderParagraph render a single a paragraph that has already been parsed out
+func (p *parser) renderParagraph(out *bytes.Buffer, data []byte) {
+	if len(data) == 0 {
+		return
+	}
+
+	// trim leading spaces
+	begin := 0
+	for data[begin] == ' ' {
+		begin++
+	}
+
+	// trim trailing newline
+	end := len(data) - 1
+
+	// trim trailing spaces
+	for end > begin && data[end-1] == ' ' {
+		end--
+	}
+
+	work := func() bool {
+		p.inline(out, data[begin:end])
+		return true
+	}
+
+	p.r.Paragraph(out, work)
 }

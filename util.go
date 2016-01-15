@@ -155,3 +155,8 @@ func SanitizedString(text string) string {
 
 	return string(anchorName)
 }
+
+// isspace test if a character is a whitespace character
+func isspace(c byte) bool {
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v'
+}
