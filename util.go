@@ -160,3 +160,24 @@ func SanitizedString(text string) string {
 func isspace(c byte) bool {
 	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v'
 }
+
+// isletter test if a character is a letter
+func isletter(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+}
+
+// isalnum test if a character is a letter or a digit
+func isalnum(c byte) bool {
+	return (c >= '0' && c <= '9') || isletter(c)
+}
+
+// ispunct test if a character is a puncuation symbol
+func ispunct(c byte) bool {
+	for _, r := range []byte("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") {
+		if c == r {
+			return true
+		}
+	}
+
+	return false
+}
