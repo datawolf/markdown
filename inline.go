@@ -134,6 +134,11 @@ func helperEmphasis(p *parser, out *bytes.Buffer, data []byte, c byte) int {
 			continue
 		}
 		if data[i] == c && !isspace(data[i-1]) {
+			if p.flags&EXTENSION_NO_INTRA_EMPHASIS != 0 {
+				if !(i+1 == len(data) || isspace(data[i+1]) || ispunct(data[i+1])) {
+					continue
+				}
+			}
 			var work bytes.Buffer
 			p.inline(&work, data[:i])
 			p.r.Emphasis(out, work.Bytes())

@@ -114,6 +114,18 @@ func TestEmphasis(t *testing.T) {
 	doTestsInline(t, tests)
 }
 
+func TestNoIntraEmphasis(t *testing.T) {
+	tests := []string {
+		"some para_graph with _emphasised_ text.\n",
+		"<p>some para_graph with <em>emphasised</em> text.</p>\n",
+
+		"un*frigging*believable\n",
+		"<p>un*frigging*believable</p>\n",
+	}
+	options := Options{Extensions: EXTENSION_NO_INTRA_EMPHASIS}
+	doTestsInlineParam(t, tests, options, 0, HtmlRendererParameters{})
+}
+
 //
 //
 // Unit TestCases
