@@ -180,6 +180,35 @@ func TestStrong(t *testing.T) {
 	doTestsInline(t, tests)
 }
 
+func TestEmphasisMix(t *testing.T) {
+	tests := []string{
+		"***triple emphasis***\n",
+		"<p><strong><em>triple emphasis</em></strong></p>\n",
+
+		"***triple\nemphasis***\n",
+		"<p><strong><em>triple\nemphasis</em></strong></p>\n",
+
+		"___triple emphasis___\n",
+		"<p><strong><em>triple emphasis</em></strong></p>\n",
+
+		"***triple emphasis___\n",
+		"<p>***triple emphasis___</p>\n",
+
+		"*__triple emphasis__*\n",
+		"<p><em><strong>triple emphasis</strong></em></p>\n",
+
+		"__*triple emphasis*__\n",
+		"<p><strong><em>triple emphasis</em></strong></p>\n",
+
+		"**improper  *nesting** is* bad\n",
+		"<p><strong>improper  *nesting</strong> is* bad</p>\n",
+
+		"*improper  **nesting* is** bad\n",
+		"<p>*improper  <strong>nesting* is</strong> bad</p>\n",
+	}
+	doTestsInline(t, tests)
+}
+
 //
 //
 // Unit TestCases

@@ -81,6 +81,7 @@ type Renderer interface {
 	//	CodeSpan(out *bytes.Buffer, text []byte)
 	Emphasis(out *bytes.Buffer, text []byte)
 	DoubleEmphasis(out *bytes.Buffer, text []byte)
+	TripleEmphasis(out *bytes.Buffer, text []byte)
 
 	// Low-level callbacks
 	NormalText(out *bytes.Buffer, entity []byte)

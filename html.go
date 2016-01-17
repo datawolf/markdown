@@ -216,6 +216,16 @@ func (html *Html) DoubleEmphasis(out *bytes.Buffer, text []byte) {
 	out.WriteString("</strong>")
 }
 
+func (html *Html) TripleEmphasis(out *bytes.Buffer, text []byte) {
+	if len(text) == 0 {
+		return
+	}
+	out.WriteString("<strong><em>")
+	out.Write(text)
+	out.WriteString("</em></strong>")
+
+}
+
 func (html *Html) Paragraph(out *bytes.Buffer, text func() bool) {
 	marker := out.Len()
 

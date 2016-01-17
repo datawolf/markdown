@@ -80,7 +80,7 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// process: *test*  _test_
 	if len(data) > 2 && data[1] != c {
-		if isspace(data[2]) {
+		if isspace(data[1]) {
 			return 0
 		}
 		if ret = helperEmphasis(p, out, data[1:], c); ret == 0 {
@@ -100,6 +100,16 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 	}
 
 	// process: ***test***  ___test___
+	if len(data) > 4 && data[1] == c && data[2] == c && data[3] != c {
+		if isspace(data[3]) {
+			return 0
+		}
+		if ret = helperTripleEmphasis(p, out, data, 3, c); ret == 0 {
+			return 0
+		}
+
+		return ret + 3
+	}
 	return 0
 }
 
@@ -182,6 +192,53 @@ func helperDoubleEmphasis(p *parser, out *bytes.Buffer, data []byte, c byte) int
 		}
 		i++
 	}
+	return 0
+}
 
+func helperTripleEmphasis(p *parser, out *bytes.Buffer, data []byte, offset int, c byte) int {
+	i := 0
+	origData := data
+	data = data[offset:]
+
+	for i < len(data) {
+		length := helperFindEmphChar(data[i:], c)
+		if length == 0 {
+			return 0
+		}
+		i += length
+
+		// skip whitespace  proceded symbols
+		if data[i] != c || isspace(data[i-1]) {
+			continue
+		}
+
+		switch {
+		case i+2 < len(data) && data[i+1] == c && data[i+2] == c:
+			// triple symbol found
+			var work bytes.Buffer
+
+			p.inline(&work, data[:i])
+			if work.Len() > 0 {
+				p.r.TripleEmphasis(out, work.Bytes())
+			}
+			return i + 3
+		case i+1 < len(data) && data[i+1] == c:
+			// double symbol found, hand over to emph1
+			length = helperEmphasis(p, out, origData[offset-2:], c)
+			if length == 0 {
+				return 0
+			} else {
+				return length - 2
+			}
+		default:
+			// single symbol found, hand over to emph2
+			length = helperDoubleEmphasis(p, out, origData[offset-1:], c)
+			if length == 0 {
+				return 0
+			} else {
+				return length - 1
+			}
+		}
+	}
 	return 0
 }
