@@ -115,7 +115,7 @@ func TestEmphasis(t *testing.T) {
 }
 
 func TestNoIntraEmphasis(t *testing.T) {
-	tests := []string {
+	tests := []string{
 		"some para_graph with _emphasised_ text.\n",
 		"<p>some para_graph with <em>emphasised</em> text.</p>\n",
 
@@ -124,6 +124,60 @@ func TestNoIntraEmphasis(t *testing.T) {
 	}
 	options := Options{Extensions: EXTENSION_NO_INTRA_EMPHASIS}
 	doTestsInlineParam(t, tests, options, 0, HtmlRendererParameters{})
+}
+
+func TestStrong(t *testing.T) {
+	tests := []string{
+		"nothing inline\n",
+		"<p>nothing inline</p>\n",
+
+		"simple **inline** test\n",
+		"<p>simple <strong>inline</strong> test</p>\n",
+
+		"**at the** beginning\n",
+		"<p><strong>at the</strong> beginning</p>\n",
+
+		"at the **end**\n",
+		"<p>at the <strong>end</strong></p>\n",
+
+		"**try two** in **one line**\n",
+		"<p><strong>try two</strong> in <strong>one line</strong></p>\n",
+
+		"over **two\nlines** test\n",
+		"<p>over <strong>two\nlines</strong> test</p>\n",
+
+		"odd **number of** marker** here\n",
+		"<p>odd <strong>number of</strong> marker** here</p>\n",
+
+		"odd **number\nof** marker** here\n",
+		"<p>odd <strong>number\nof</strong> marker** here</p>\n",
+
+		"simple __inline__ test\n",
+		"<p>simple <strong>inline</strong> test</p>\n",
+
+		"__at the__ beginning\n",
+		"<p><strong>at the</strong> beginning</p>\n",
+
+		"at the __end__\n",
+		"<p>at the <strong>end</strong></p>\n",
+
+		"__try two__ in __one line__\n",
+		"<p><strong>try two</strong> in <strong>one line</strong></p>\n",
+
+		"over __two\nlines__ test\n",
+		"<p>over <strong>two\nlines</strong> test</p>\n",
+
+		"odd __number of__ marker__ here\n",
+		"<p>odd <strong>number of</strong> marker__ here</p>\n",
+
+		"odd __number\nof__ marker__ here\n",
+		"<p>odd <strong>number\nof</strong> marker__ here</p>\n",
+
+		"mix of **markers__\n",
+		"<p>mix of **markers__</p>\n",
+	}
+
+	doTestsInline(t, tests)
 }
 
 //

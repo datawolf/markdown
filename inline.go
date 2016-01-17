@@ -80,12 +80,24 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// process: *test*  _test_
 	if len(data) > 2 && data[1] != c {
+		if isspace(data[2]) {
+			return 0
+		}
 		if ret = helperEmphasis(p, out, data[1:], c); ret == 0 {
 			return 0
 		}
 		return ret + 1
 	}
 	// process: **test**  __test__
+	if len(data) > 3 && data[1] == c && data[2] != c {
+		if isspace(data[2]) {
+			return 0
+		}
+		if ret = helperDoubleEmphasis(p, out, data[2:], c); ret == 0 {
+			return 0
+		}
+		return ret + 2
+	}
 
 	// process: ***test***  ___test___
 	return 0
@@ -145,5 +157,31 @@ func helperEmphasis(p *parser, out *bytes.Buffer, data []byte, c byte) int {
 			return i + 1
 		}
 	}
+	return 0
+}
+
+func helperDoubleEmphasis(p *parser, out *bytes.Buffer, data []byte, c byte) int {
+	i := 0
+
+	for i < len(data) {
+		length := helperFindEmphChar(data[i:], c)
+		if length == 0 {
+			return 0
+		}
+		i += length
+
+		if i+1 < len(data) && data[i] == c && data[i+1] == c && i > 0 && !isspace(data[i-1]) {
+			var work bytes.Buffer
+			p.inline(&work, data[:i])
+
+			if work.Len() > 0 {
+				p.r.DoubleEmphasis(out, work.Bytes())
+			}
+
+			return i + 2
+		}
+		i++
+	}
+
 	return 0
 }
