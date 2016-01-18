@@ -243,6 +243,41 @@ func TestStrikeTrough(t *testing.T) {
 	doTestsInline(t, tests)
 }
 
+func TestCodeSpan(t *testing.T) {
+	tests := []string{
+		"`source code`\n",
+		"<p><code>source code</code></p>\n",
+
+		"` source code with spaces `\n",
+		"<p><code>source code with spaces</code></p>\n",
+
+		"a `single marker\n",
+		"<p>a `single marker</p>\n",
+
+		"a single multi-tick marker with ``` no text\n",
+		"<p>a single multi-tick marker with ``` no text</p>\n",
+
+		"makers with ` ` a space\n",
+		"<p>makers with  a space</p>\n",
+
+		"`source code` and a `stray\n",
+		"<p><code>source code</code> and a `stray</p>\n",
+
+		"`source *with* _wakward characters_ in it`\n",
+		"<p><code>source *with* _wakward characters_ in it</code></p>\n",
+
+		"`spilt over\ntwo lines`\n",
+		"<p><code>spilt over\ntwo lines</code></p>\n",
+
+		"```multiple ticks``` for the marker\n",
+		"<p><code>multiple ticks</code> for the marker</p>\n",
+
+		"```multiple ticks `with` ticks inside```\n",
+		"<p><code>multiple ticks `with` ticks inside</code></p>\n",
+	}
+	doTestsInline(t, tests)
+}
+
 //
 //
 // Unit TestCases

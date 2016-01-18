@@ -235,6 +235,15 @@ func (html *Html) StrikeThrough(out *bytes.Buffer, text []byte) {
 	out.Write(text)
 	out.WriteString("</del>")
 }
+
+func (html *Html) CodeSpan(out *bytes.Buffer, text []byte) {
+	if len(text) == 0 {
+		return
+	}
+	out.WriteString("<code>")
+	out.Write(text)
+	out.WriteString("</code>")
+}
 func (html *Html) Paragraph(out *bytes.Buffer, text func() bool) {
 	marker := out.Len()
 

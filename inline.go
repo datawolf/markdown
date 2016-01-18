@@ -250,3 +250,47 @@ func helperTripleEmphasis(p *parser, out *bytes.Buffer, data []byte, offset int,
 	}
 	return 0
 }
+
+func codeSpan(p *parser, out *bytes.Buffer, data []byte, offset int) int {
+	data = data[offset:]
+
+	nb := 0
+
+	// count the number of backticks in the delimiter
+	for nb < len(data) && data[nb] == '`' {
+		nb++
+	}
+
+	// find the next delimiter
+	i, end := 0, 0
+	for end = nb; end < len(data) && i < nb; end++ {
+		if data[end] == '`' {
+			i++
+		} else {
+			i = 0
+		}
+	}
+
+	// no matching delimiter
+	if i < nb && end >= len(data) {
+		return 0
+	}
+
+	// trim outside  wiitespace
+	first := nb
+	for first < end && data[first] == ' ' {
+		first++
+	}
+
+	last := end - nb
+	for last > first && data[last-1] == ' ' {
+		last--
+	}
+
+	// render the code span
+	if first != last {
+		p.r.CodeSpan(out, data[first:last])
+	}
+
+	return end
+}
