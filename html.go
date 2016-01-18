@@ -226,6 +226,15 @@ func (html *Html) TripleEmphasis(out *bytes.Buffer, text []byte) {
 
 }
 
+func (html *Html) StrikeThrough(out *bytes.Buffer, text []byte) {
+	if len(text) == 0 {
+		return
+	}
+
+	out.WriteString("<del>")
+	out.Write(text)
+	out.WriteString("</del>")
+}
 func (html *Html) Paragraph(out *bytes.Buffer, text func() bool) {
 	marker := out.Len()
 

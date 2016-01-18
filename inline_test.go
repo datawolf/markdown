@@ -33,6 +33,7 @@ func doTestsInlineParam(t *testing.T, tests []string, opts Options, htmlFlags in
 }
 
 func runMarkdownInline(input string, opts Options, htmlFlags int, params HtmlRendererParameters) string {
+	opts.Extensions |= EXTENSION_STRIKETHROUGH
 	htmlFlags |= HTML_USE_XHTML
 
 	renderer := HtmlRendererWithParameters(htmlFlags, "", "", params)
@@ -206,6 +207,36 @@ func TestEmphasisMix(t *testing.T) {
 		"*improper  **nesting* is** bad\n",
 		"<p>*improper  <strong>nesting* is</strong> bad</p>\n",
 	}
+	doTestsInline(t, tests)
+}
+
+func TestStrikeTrough(t *testing.T) {
+	tests := []string{
+		"nothing inline\n",
+		"<p>nothing inline</p>\n",
+
+		"simple ~~inline~~ test\n",
+		"<p>simple <del>inline</del> test</p>\n",
+
+		"~~at the~~ beginning\n",
+		"<p><del>at the</del> beginning</p>\n",
+
+		"at ~~the end~~\n",
+		"<p>at <del>the end</del></p>\n",
+
+		"~~try two~~ in ~~one line~~\n",
+		"<p><del>try two</del> in <del>one line</del></p>\n",
+
+		"over ~~two\nlines~~ test\n",
+		"<p>over <del>two\nlines</del> test</p>\n",
+
+		"odd ~~number of~~ markers~~ here\n",
+		"<p>odd <del>number of</del> markers~~ here</p>\n",
+
+		"odd ~~number\nof~~ markers~~ here\n",
+		"<p>odd <del>number\nof</del> markers~~ here</p>\n",
+	}
+
 	doTestsInline(t, tests)
 }
 

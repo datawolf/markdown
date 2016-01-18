@@ -80,7 +80,9 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// process: *test*  _test_
 	if len(data) > 2 && data[1] != c {
-		if isspace(data[1]) {
+		// whitespace can not follow an opening emphasis
+		// And strikethrough only takes two characters '~~'
+		if c == '~' || isspace(data[1]) {
 			return 0
 		}
 		if ret = helperEmphasis(p, out, data[1:], c); ret == 0 {
@@ -88,7 +90,7 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 		}
 		return ret + 1
 	}
-	// process: **test**  __test__
+	// process: **test**  __test__ ~~test~~
 	if len(data) > 3 && data[1] == c && data[2] != c {
 		if isspace(data[2]) {
 			return 0
@@ -101,7 +103,8 @@ func emphasis(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// process: ***test***  ___test___
 	if len(data) > 4 && data[1] == c && data[2] == c && data[3] != c {
-		if isspace(data[3]) {
+		// strikethrough only takes two characters '~~'
+		if c == '~' || isspace(data[3]) {
 			return 0
 		}
 		if ret = helperTripleEmphasis(p, out, data, 3, c); ret == 0 {
@@ -185,7 +188,12 @@ func helperDoubleEmphasis(p *parser, out *bytes.Buffer, data []byte, c byte) int
 			p.inline(&work, data[:i])
 
 			if work.Len() > 0 {
-				p.r.DoubleEmphasis(out, work.Bytes())
+				// pick up the right renderer
+				if c == '~' {
+					p.r.StrikeThrough(out, work.Bytes())
+				} else {
+					p.r.DoubleEmphasis(out, work.Bytes())
+				}
 			}
 
 			return i + 2
