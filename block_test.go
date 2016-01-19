@@ -111,6 +111,20 @@ func TestPrefixHeaderNoExtensions(t *testing.T) {
 
 		"#######Header 7\n",
 		"<h6>#Header 7</h6>\n",
+
+		"Hello\n# Header 1\nGoodbye\n",
+		"<p>Hello</p>\n\n<h1>Header 1</h1>\n\n<p>Goodbye</p>\n",
+
+		"#Header 1 \\#\n",
+		"<h1>Header 1 #</h1>\n",
+
+		"#Header 1 \\# foo\n",
+		"<h1>Header 1 # foo</h1>\n",
+
+		"#Header 1 #\\##\n",
+		"<h1>Header 1 ##</h1>\n",
+
+
 	}
 
 	doTestsBlock(t, tests, 0)

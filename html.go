@@ -175,6 +175,7 @@ func (html *Html) DocumentFooter(out *bytes.Buffer) {
 
 func (html *Html) Header(out *bytes.Buffer, header func() bool, level int, id string) {
 	marker := out.Len()
+	doubleSpace(out)
 
 	if id == "" && html.flags&HTML_TOC != 0 {
 		id = fmt.Sprintf("toc_%d", html.headerCount)
