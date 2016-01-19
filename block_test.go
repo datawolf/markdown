@@ -351,6 +351,14 @@ func TestPrefixAutoHeaderIdExtensionWithPrefixAndSuffix(t *testing.T) {
 	doTestsBlockWithRunner(t, tests, EXTENSION_AUTO_HEADER_IDS, runnerWithRendererParameters(parameters))
 }
 
+func TestPrefixMultipleHeaderExtensions(t *testing.T) {
+	tests := []string{
+		"# Header\n\n# Header {#header}\n\n# Header 1",
+		"<h1 id=\"header\">Header</h1>\n\n<h1 id=\"header-1\">Header</h1>\n\n<h1 id=\"header-1-1\">Header 1</h1>\n",
+	}
+	doTestsBlock(t, tests, EXTENSION_AUTO_HEADER_IDS|EXTENSION_HEADER_IDS)
+}
+
 //
 //
 // Unit TestCases
