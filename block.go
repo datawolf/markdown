@@ -78,6 +78,27 @@ func (p *parser) prefixHeader(out *bytes.Buffer, input []byte) int {
 	skip := end
 	id := ""
 
+	// get the id
+	if p.flags&EXTENSION_HEADER_IDS != 0 {
+		j, k := 0, 0
+
+		// find the start/end of header id
+		for j = start; j < end-1 && (input[j] != '{' || input[j+1] != '#'); j++ {
+		}
+		for k = j + 1; k < end && input[k] != '}'; k++ {
+		}
+
+		// extract the header id if found
+		if j < end && k < end {
+			id = string(input[j+2 : k])
+			end = j
+			skip = k + 1
+			for end > 0 && input[end-1] == ' ' {
+				end--
+			}
+		}
+	}
+
 	for end > 0 && input[end-1] == '#' {
 		if isBackslashEscaped(input, end-1) {
 			break

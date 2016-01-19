@@ -178,6 +178,55 @@ func TestPrefixHeaderSpaceExtension(t *testing.T) {
 	doTestsBlock(t, tests, EXTENSION_SPACE_HEADERS)
 }
 
+func TestPrefixHeaderIdExtension(t *testing.T) {
+	var tests = []string{
+		"# Header 1 {#someid}\n",
+		"<h1 id=\"someid\">Header 1</h1>\n",
+
+		"# Header 1 {#someid}   \n",
+		"<h1 id=\"someid\">Header 1</h1>\n",
+
+		"# Header 1         {#someid}\n",
+		"<h1 id=\"someid\">Header 1</h1>\n",
+
+		"# Header 1 {#someid\n",
+		"<h1>Header 1 {#someid</h1>\n",
+
+		"# Header 1 {#someid\n",
+		"<h1>Header 1 {#someid</h1>\n",
+
+		"# Header 1 {#someid}}\n",
+		"<h1 id=\"someid\">Header 1</h1>\n\n<p>}</p>\n",
+
+		"## Header 2 {#someid}\n",
+		"<h2 id=\"someid\">Header 2</h2>\n",
+
+		"### Header 3 {#someid}\n",
+		"<h3 id=\"someid\">Header 3</h3>\n",
+
+		"#### Header 4 {#someid}\n",
+		"<h4 id=\"someid\">Header 4</h4>\n",
+
+		"##### Header 5 {#someid}\n",
+		"<h5 id=\"someid\">Header 5</h5>\n",
+
+		"###### Header 6 {#someid}\n",
+		"<h6 id=\"someid\">Header 6</h6>\n",
+
+		"####### Header 7 {#someid}\n",
+		"<h6 id=\"someid\"># Header 7</h6>\n",
+		"# Header 1 # {#someid}\n",
+		"<h1 id=\"someid\">Header 1</h1>\n",
+
+		"## Header 2 ## {#someid}\n",
+		"<h2 id=\"someid\">Header 2</h2>\n",
+
+		"Hello\n# Header 1\nGoodbye\n",
+		"<p>Hello</p>\n\n<h1>Header 1</h1>\n\n<p>Goodbye</p>\n",
+	}
+	doTestsBlock(t, tests, EXTENSION_HEADER_IDS)
+}
+
 //
 //
 // Unit TestCases
