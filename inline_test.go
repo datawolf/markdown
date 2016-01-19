@@ -176,6 +176,12 @@ func TestStrong(t *testing.T) {
 
 		"mix of **markers__\n",
 		"<p>mix of **markers__</p>\n",
+
+		"**`/usr`**: this folder is name `usr`\n",
+		"<p><strong><code>/usr</code></strong>: this folder is name <code>usr</code></p>\n",
+
+		"**`/usr`**:\n\n this folder is name `usr`\n",
+		"<p><strong><code>/usr</code></strong>:</p>\n\n<p>this folder is name <code>usr</code></p>\n",
 	}
 
 	doTestsInline(t, tests)
@@ -276,6 +282,48 @@ func TestCodeSpan(t *testing.T) {
 		"<p><code>multiple ticks `with` ticks inside</code></p>\n",
 	}
 	doTestsInline(t, tests)
+}
+
+func TestLineBreak(t *testing.T) {
+	tests := []string{
+		"this line  \nhas a break\n",
+		"<p>this line<br />\nhas a break</p>\n",
+
+		"this line \ndoes not\n",
+		"<p>this line\ndoes not</p>\n",
+
+		"this line\\\ndoes not\n",
+		"<p>this line\\\ndoes not</p>\n",
+
+		"this line\\ \ndoes not\n",
+		"<p>this line\\\ndoes not</p>\n",
+
+		"this has an   \nextra space\n",
+		"<p>this has an<br />\nextra space</p>\n",
+	}
+	doTestsInline(t, tests)
+
+	tests = []string{
+		"this line  \nhas a break\n",
+		"<p>this line<br />\nhas a break</p>\n",
+
+		"this line \ndoes not\n",
+		"<p>this line\ndoes not</p>\n",
+
+		"this line\\\nhas a break\n",
+		"<p>this line<br />\nhas a break</p>\n",
+
+		"this line\\ \ndoes not\n",
+		"<p>this line\\\ndoes not</p>\n",
+
+		"this has an   \nextra space\n",
+		"<p>this has an<br />\nextra space</p>\n",
+	}
+
+	opts := Options{
+		Extensions: EXTENSION_BACKSLASH_LINE_BREAK,
+	}
+	doTestsInlineParam(t, tests, opts, 0, HtmlRendererParameters{})
 }
 
 //

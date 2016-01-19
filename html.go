@@ -246,11 +246,17 @@ func (html *Html) CodeSpan(out *bytes.Buffer, text []byte) {
 }
 func (html *Html) Paragraph(out *bytes.Buffer, text func() bool) {
 	marker := out.Len()
-
+	doubleSpace(out)
 	out.WriteString("<p>")
 	if !text() {
 		out.Truncate(marker)
 		return
 	}
 	out.WriteString("</p>\n")
+}
+
+func (html *Html) LineBreak(out *bytes.Buffer) {
+	out.WriteString("<br")
+	out.WriteString(html.closeTag)
+	out.WriteByte('\n')
 }

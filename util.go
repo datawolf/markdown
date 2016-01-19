@@ -181,3 +181,9 @@ func ispunct(c byte) bool {
 
 	return false
 }
+
+func doubleSpace(out *bytes.Buffer) {
+	if out.Len() > 0 {
+		out.WriteByte('\n')
+	}
+}

@@ -84,6 +84,7 @@ type Renderer interface {
 	TripleEmphasis(out *bytes.Buffer, text []byte)
 	StrikeThrough(out *bytes.Buffer, text []byte)
 	CodeSpan(out *bytes.Buffer, text []byte)
+	LineBreak(out *bytes.Buffer)
 
 	// Low-level callbacks
 	NormalText(out *bytes.Buffer, entity []byte)
@@ -190,7 +191,7 @@ func MarkdownOptions(input []byte, renderer Renderer, opts Options) []byte {
 		p.inlineCallback['~'] = emphasis
 	}
 	p.inlineCallback['`'] = codeSpan
-	//	p.inlineCallback['\n'] = linkBreak
+	p.inlineCallback['\n'] = lineBreak
 	//	p.inlineCallback['['] = link
 	//	p.inlineCallback['<'] = leftAngle
 	p.inlineCallback['\\'] = escape

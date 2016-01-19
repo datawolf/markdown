@@ -294,3 +294,29 @@ func codeSpan(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	return end
 }
+
+// new line preceded by two spaces becomes <br>
+func lineBreak(p *parser, out *bytes.Buffer, data []byte, offset int) int {
+	//remove trailing spaces from out
+	outBytes := out.Bytes()
+	end := len(outBytes)
+	eol := end
+	for eol > 0 && outBytes[eol-1] == ' ' {
+		eol--
+	}
+	out.Truncate(eol)
+
+	precededByTwoSpaces := offset >= 2 && data[offset-2] == ' ' && data[offset-1] == ' '
+	precededByBackslash := offset >= 1 && data[offset-1] == '\\'
+	precededByBackslash = precededByBackslash && p.flags&EXTENSION_BACKSLASH_LINE_BREAK != 0
+
+	if p.flags&EXTENSION_HARD_LINE_BREAK == 0 && !precededByTwoSpaces && !precededByBackslash {
+		return 0
+	}
+
+	if precededByBackslash && eol > 0 {
+		out.Truncate(eol - 1)
+	}
+	p.r.LineBreak(out)
+	return 1
+}
