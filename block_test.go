@@ -304,6 +304,53 @@ func TestPrefixAutoHeaderIdExtension(t *testing.T) {
 	doTestsBlock(t, tests, EXTENSION_AUTO_HEADER_IDS)
 }
 
+func TestPrefixAutoHeaderIdExtensionWithPrefixAndSuffix(t *testing.T) {
+	var tests = []string{
+		"# Header 1\n",
+		"<h1 id=\"PRE:header-1:POST\">Header 1</h1>\n",
+
+		"# Header 1   \n",
+		"<h1 id=\"PRE:header-1:POST\">Header 1</h1>\n",
+
+		"## Header 2\n",
+		"<h2 id=\"PRE:header-2:POST\">Header 2</h2>\n",
+
+		"### Header 3\n",
+		"<h3 id=\"PRE:header-3:POST\">Header 3</h3>\n",
+
+		"#### Header 4\n",
+		"<h4 id=\"PRE:header-4:POST\">Header 4</h4>\n",
+
+		"##### Header 5\n",
+		"<h5 id=\"PRE:header-5:POST\">Header 5</h5>\n",
+
+		"###### Header 6\n",
+		"<h6 id=\"PRE:header-6:POST\">Header 6</h6>\n",
+
+		"####### Header 7\n",
+		"<h6 id=\"PRE:header-7:POST\"># Header 7</h6>\n",
+
+		"Hello\n# Header 1\nGoodbye\n",
+		"<p>Hello</p>\n\n<h1 id=\"PRE:header-1:POST\">Header 1</h1>\n\n<p>Goodbye</p>\n",
+
+		"# Header\n\n# Header\n",
+		"<h1 id=\"PRE:header:POST\">Header</h1>\n\n<h1 id=\"PRE:header-1:POST\">Header</h1>\n",
+
+		"# Header 1\n\n# Header 1",
+		"<h1 id=\"PRE:header-1:POST\">Header 1</h1>\n\n<h1 id=\"PRE:header-1-1:POST\">Header 1</h1>\n",
+
+		"# Header\n\n# Header 1\n\n# Header\n\n# Header",
+		"<h1 id=\"PRE:header:POST\">Header</h1>\n\n<h1 id=\"PRE:header-1:POST\">Header 1</h1>\n\n<h1 id=\"PRE:header-1-1:POST\">Header</h1>\n\n<h1 id=\"PRE:header-1-2:POST\">Header</h1>\n",
+	}
+
+	parameters := HtmlRendererParameters{
+		HeaderIDPrefix: "PRE:",
+		HeaderIDSuffix: ":POST",
+	}
+
+	doTestsBlockWithRunner(t, tests, EXTENSION_AUTO_HEADER_IDS, runnerWithRendererParameters(parameters))
+}
+
 //
 //
 // Unit TestCases
