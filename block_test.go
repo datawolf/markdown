@@ -359,6 +359,100 @@ func TestPrefixMultipleHeaderExtensions(t *testing.T) {
 	doTestsBlock(t, tests, EXTENSION_AUTO_HEADER_IDS|EXTENSION_HEADER_IDS)
 }
 
+func TestUnderlineHeaders(t *testing.T) {
+	tests := []string{
+		"Header 1\n========\n",
+		"<h1>Header 1</h1>\n",
+
+		"Header 2\n--------\n",
+		"<h2>Header 2</h2>\n",
+
+		"A\n=\n",
+		"<h1>A</h1>\n",
+
+		"B\n-\n",
+		"<h2>B</h2>\n",
+
+		"Paragraph\nHeader\n=\n",
+		"<p>Paragraph</p>\n\n<h1>Header</h1>\n",
+
+		"Header\n===\nParagraph\n",
+		"<h1>Header</h1>\n\n<p>Paragraph</p>\n",
+
+		"Header\n===\nAnother header\n---\n",
+		"<h1>Header</h1>\n\n<h2>Another header</h2>\n",
+
+		"   Header\n======\n",
+		"<h1>Header</h1>\n",
+
+		"Header with *inline*\n=====\n",
+		"<h1>Header with <em>inline</em></h1>\n",
+
+		"Paragraph\n\n\n\n\nHeader\n===\n",
+		"<p>Paragraph</p>\n\n<h1>Header</h1>\n",
+
+		"Trailing space \n====        \n\n",
+		"<h1>Trailing space</h1>\n",
+		"Trailing spaces\n====        \n\n",
+		"<h1>Trailing spaces</h1>\n",
+
+		"Double underline\n=====\n=====\n",
+		"<h1>Double underline</h1>\n\n<p>=====</p>\n",
+	}
+
+	doTestsBlock(t, tests, 0)
+}
+
+func TestUnderlineHeadersAutoIDs(t *testing.T) {
+	var tests = []string{
+		"Header 1\n========\n",
+		"<h1 id=\"header-1\">Header 1</h1>\n",
+
+		"Header 2\n--------\n",
+		"<h2 id=\"header-2\">Header 2</h2>\n",
+
+		"A\n=\n",
+		"<h1 id=\"a\">A</h1>\n",
+
+		"B\n-\n",
+		"<h2 id=\"b\">B</h2>\n",
+
+		"Paragraph\nHeader\n=\n",
+		"<p>Paragraph</p>\n\n<h1 id=\"header\">Header</h1>\n",
+
+		"Header\n===\nParagraph\n",
+		"<h1 id=\"header\">Header</h1>\n\n<p>Paragraph</p>\n",
+
+		"Header\n===\nAnother header\n---\n",
+		"<h1 id=\"header\">Header</h1>\n\n<h2 id=\"another-header\">Another header</h2>\n",
+
+		"   Header\n======\n",
+		"<h1 id=\"header\">Header</h1>\n",
+
+		"Header with *inline*\n=====\n",
+		"<h1 id=\"header-with-inline\">Header with <em>inline</em></h1>\n",
+
+		"Paragraph\n\n\n\n\nHeader\n===\n",
+		"<p>Paragraph</p>\n\n<h1 id=\"header\">Header</h1>\n",
+
+		"Trailing space \n====        \n\n",
+		"<h1 id=\"trailing-space\">Trailing space</h1>\n",
+
+		"Trailing spaces\n====        \n\n",
+		"<h1 id=\"trailing-spaces\">Trailing spaces</h1>\n",
+
+		"Double underline\n=====\n=====\n",
+		"<h1 id=\"double-underline\">Double underline</h1>\n\n<p>=====</p>\n",
+
+		"Header\n======\n\nHeader\n======\n",
+		"<h1 id=\"header\">Header</h1>\n\n<h1 id=\"header-1\">Header</h1>\n",
+
+		"Header 1\n========\n\nHeader 1\n========\n",
+		"<h1 id=\"header-1\">Header 1</h1>\n\n<h1 id=\"header-1-1\">Header 1</h1>\n",
+	}
+	doTestsBlock(t, tests, EXTENSION_AUTO_HEADER_IDS)
+}
+
 //
 //
 // Unit TestCases

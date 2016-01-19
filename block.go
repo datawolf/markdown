@@ -123,6 +123,32 @@ func (p *parser) prefixHeader(out *bytes.Buffer, input []byte) int {
 	return skip
 }
 
+func (p *parser) isUnderlineHeader(data []byte) int {
+	// test if level 1 header
+	if data[0] == '=' {
+		i := skipChar(data, 1, '=')
+		i = skipChar(data, i, ' ')
+		if data[i] == '\n' {
+			return 1
+		} else {
+			return 0
+		}
+	}
+
+	// test if level 2 header
+	if data[0] == '-' {
+		i := skipChar(data, 1, '-')
+		i = skipChar(data, i, ' ')
+		if data[i] == '\n' {
+			return 2
+		} else {
+			return 0
+		}
+	}
+
+	return 0
+}
+
 func (p *parser) isEmpty(data []byte) int {
 	// it is okay to call isEmpty on an empty buffer
 	if len(data) == 0 {
@@ -140,13 +166,14 @@ func (p *parser) isEmpty(data []byte) int {
 }
 
 func (p *parser) paragraph(out *bytes.Buffer, data []byte) int {
-	var i int
+	var prev, line, i int
 
 	// keep going until we find something to mark the end of the paragraph
 	for i < len(data) {
 		// mark the beginning of the current line
-		//	prev = line
+		prev = line
 		current := data[i:]
+		line = i
 
 		// did we find a blank line marking the end of the paragraph
 		if n := p.isEmpty(current); n > 0 {
@@ -155,6 +182,43 @@ func (p *parser) paragraph(out *bytes.Buffer, data []byte) int {
 		}
 
 		// an underline under some text marks a header, so our paragraph ended on prev line
+		if i > 0 {
+			if level := p.isUnderlineHeader(current); level > 0 {
+				// reander the paragraph
+				p.renderParagraph(out, data[:prev])
+
+				// ingrore leading and trailing whitespace
+				eol := i - 1
+				for prev < eol && data[prev] == ' ' {
+					prev++
+				}
+				for eol > prev && data[eol-1] == ' ' {
+					eol--
+				}
+
+				// render the header
+				// this ugly double closure avoids forceing variables on the heap
+				work := func(o *bytes.Buffer, pp *parser, d []byte) func() bool {
+					return func() bool {
+						pp.inline(o, d)
+						return true
+					}
+				}(out, p, data[prev:eol])
+
+				id := ""
+				if p.flags&EXTENSION_AUTO_HEADER_IDS != 0 {
+					id = SanitizedString(string(data[prev:eol]))
+				}
+
+				p.r.Header(out, work, level, id)
+
+				// find the end of the underline
+				for data[i] != '\n' {
+					i++
+				}
+				return i
+			}
+		}
 
 		// if there's a prefixed header paragraph is over
 		if p.isPrefixHeader(current) {
