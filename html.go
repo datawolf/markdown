@@ -173,6 +173,26 @@ func (html *Html) DocumentFooter(out *bytes.Buffer) {
 	}
 }
 
+// ensureUniqueHeaderID ensure the unique header ids
+func (html *Html) ensureUniqueHeaderID(id string) string {
+	for count, found := html.headerIDs[id]; found; count, found = html.headerIDs[id] {
+		tmp := fmt.Sprintf("%s-%d", id, count+1)
+
+		if _, tmpFound := html.headerIDs[tmp]; !tmpFound {
+			html.headerIDs[id] = count + 1
+			id = tmp
+		} else {
+			id = id + "-1"
+		}
+	}
+
+	if _, found := html.headerIDs[id]; !found {
+		html.headerIDs[id] = 0
+	}
+
+	return id
+}
+
 func (html *Html) Header(out *bytes.Buffer, header func() bool, level int, id string) {
 	marker := out.Len()
 	doubleSpace(out)
@@ -182,6 +202,15 @@ func (html *Html) Header(out *bytes.Buffer, header func() bool, level int, id st
 	}
 
 	if id != "" {
+		id = html.ensureUniqueHeaderID(id)
+
+		if html.parameters.HeaderIDPrefix != "" {
+			id = html.parameters.HeaderIDPrefix + id
+		}
+
+		if html.parameters.HeaderIDSuffix != "" {
+			id = id + html.parameters.HeaderIDSuffix
+		}
 		out.WriteString(fmt.Sprintf("<h%d id=\"%s\">", level, id))
 	} else {
 		out.WriteString(fmt.Sprintf("<h%d>", level))

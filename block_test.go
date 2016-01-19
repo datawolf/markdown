@@ -227,6 +227,83 @@ func TestPrefixHeaderIdExtension(t *testing.T) {
 	doTestsBlock(t, tests, EXTENSION_HEADER_IDS)
 }
 
+func TestPrefixHeaderIdExtensionWithPrefixAndSuffix(t *testing.T) {
+	var tests = []string{
+		"# header 1 {#someid}\n",
+		"<h1 id=\"PRE:someid:POST\">header 1</h1>\n",
+
+		"## header 2 {#someid}\n",
+		"<h2 id=\"PRE:someid:POST\">header 2</h2>\n",
+
+		"### header 3 {#someid}\n",
+		"<h3 id=\"PRE:someid:POST\">header 3</h3>\n",
+
+		"#### header 4 {#someid}\n",
+		"<h4 id=\"PRE:someid:POST\">header 4</h4>\n",
+
+		"##### header 5 {#someid}\n",
+		"<h5 id=\"PRE:someid:POST\">header 5</h5>\n",
+
+		"###### header 6 {#someid}\n",
+		"<h6 id=\"PRE:someid:POST\">header 6</h6>\n",
+
+		"####### header 7 {#someid}\n",
+		"<h6 id=\"PRE:someid:POST\"># header 7</h6>\n",
+
+		"# header 1 # {#someid}\n",
+		"<h1 id=\"PRE:someid:POST\">header 1</h1>\n",
+
+		"## header 2 ## {#someid}\n",
+		"<h2 id=\"PRE:someid:POST\">header 2</h2>\n",
+	}
+	parameters := HtmlRendererParameters{
+		HeaderIDPrefix: "PRE:",
+		HeaderIDSuffix: ":POST",
+	}
+
+	doTestsBlockWithRunner(t, tests, EXTENSION_HEADER_IDS, runnerWithRendererParameters(parameters))
+}
+
+func TestPrefixAutoHeaderIdExtension(t *testing.T) {
+	var tests = []string{
+		"# Header 1\n",
+		"<h1 id=\"header-1\">Header 1</h1>\n",
+
+		"# Header 1   \n",
+		"<h1 id=\"header-1\">Header 1</h1>\n",
+
+		"## Header 2\n",
+		"<h2 id=\"header-2\">Header 2</h2>\n",
+
+		"### Header 3\n",
+		"<h3 id=\"header-3\">Header 3</h3>\n",
+
+		"#### Header 4\n",
+		"<h4 id=\"header-4\">Header 4</h4>\n",
+
+		"##### Header 5\n",
+		"<h5 id=\"header-5\">Header 5</h5>\n",
+
+		"###### Header 6\n",
+		"<h6 id=\"header-6\">Header 6</h6>\n",
+
+		"####### Header 7\n",
+		"<h6 id=\"header-7\"># Header 7</h6>\n",
+
+		"Hello\n# Header 1\nGoodbye\n",
+		"<p>Hello</p>\n\n<h1 id=\"header-1\">Header 1</h1>\n\n<p>Goodbye</p>\n",
+		"# Header\n\n# Header\n",
+		"<h1 id=\"header\">Header</h1>\n\n<h1 id=\"header-1\">Header</h1>\n",
+
+		"# Header 1\n\n# Header 1",
+		"<h1 id=\"header-1\">Header 1</h1>\n\n<h1 id=\"header-1-1\">Header 1</h1>\n",
+
+		"# Header\n\n# Header 1\n\n# Header\n\n# Header",
+		"<h1 id=\"header\">Header</h1>\n\n<h1 id=\"header-1\">Header 1</h1>\n\n<h1 id=\"header-1-1\">Header</h1>\n\n<h1 id=\"header-1-2\">Header</h1>\n",
+	}
+	doTestsBlock(t, tests, EXTENSION_AUTO_HEADER_IDS)
+}
+
 //
 //
 // Unit TestCases
