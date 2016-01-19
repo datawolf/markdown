@@ -31,7 +31,7 @@ const (
 	HTML_TOC
 	HTML_OMIT_CONTENTS
 	HTML_COMPLETE_PAGE
-	HTML_USE_XHTML
+	HTML_USE_XHTML // generate XHTML output instead of HTML
 	HTML_USE_SMARTYPANTS
 	HTML_SMARTYPANTS_FRACTIONS
 	HTML_SMARTYPANTS_DASHES
@@ -42,14 +42,23 @@ const (
 
 // HtmlRendererParameters defines the html renderer parameters
 type HtmlRendererParameters struct {
-	AbsolutePrefix             string // prepend this text to each relative URL
-	FootnoteAnchorPrefix       string // Add this text to each footnote anchor, to ensure uniqueness
+	// prepend this text to each relative URL
+	AbsolutePrefix string
+	// Add this text to each footnote anchor, to ensure uniqueness
+	FootnoteAnchorPrefix string
+	// Show this text inside the <a> tag for a footnote return link, if
+	// the HTML_FOOTNOTE_RETURN_LINKS flag is enabled. If blank, the string
+	// <sup>[return]</sup> is used.
 	FootnoteReturnLinkContents string
-	HeaderIDPrefix             string // If set, add this text to the front of each Header ID, to ensure uniqueness
-	HeaderIDSuffix             string // If set, add this text to the back of each Header ID, to ensure uniqueness
+	// If set, add this text to the front of each Header ID, to ensure uniqueness
+	HeaderIDPrefix string
+	// If set, add this text to the back of each Header ID, to ensure uniqueness
+	HeaderIDSuffix string
 }
 
 // Html is a type that implements the Renderer interface for HTML output
+//
+// Do not create this directly, instead use the HtmlRenderer function
 type Html struct {
 	flags    int    // HTML_* options
 	closeTag string // The close tag: either " />" or ">"
